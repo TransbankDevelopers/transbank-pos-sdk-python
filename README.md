@@ -1,5 +1,7 @@
 # Transbank Python POS SDK
 
+[Esta librería se encuentra en construcción]
+
 SDK Oficial de Transbank para POS integrado
 
 ## Requisitos:
@@ -67,7 +69,7 @@ La documentación relevante para usar este SDK es:
 Para ejecutar los test localmente debes usar el siguiente comando en una terminal.
 
 ```bash
-pipenv run tests
+******
 ```
 
 ### Deploy de una nueva versión.

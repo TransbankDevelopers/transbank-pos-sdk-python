@@ -1,40 +1,22 @@
 from transbank.POS.POSIntegrado import POSIntegrado
 
-port = "/dev/cu.usbmodem11201"
+
+def intermediate_message_callback(response):
+    print("Intermediate message: {}".format(str(response['response_message'])))
+
+
+port = "/dev/cu.usbmodem0123456789ABCD1"
 POS = POSIntegrado()
 print(POS.list_ports())
-POS.open_port(port)
-#response = POS.load_keys()
-#print(response)
-#print("Commerce code = {}".format(response["commerce_code"]))
-#print("Message = {}".format(response["response_message"]))
-#print(response)
-#response = POS.sale(2500, "abcd")
-#print(response)
-#print(type(response))
-#for key in response:
-#    print("{} --> {}".format(key, response[key]))
-#decoded_response = response.decode()
-#print(decoded_response)
-#normal_mode = POS.set_normal_mode()
-#print("Cambio ok" if normal_mode else "Cambio no realizado")
+print(POS.open_port(port))
+#print(POS.load_keys())
+#print(POS.sale(25000, "abcd12", True, callback=intermediate_message_callback))
 #print(POS.multicode_sale(1200, "Tic123", 597029414301))
-#response = POS.last_sale()
-#print(response)
-#decoded_response = response.decode()
-#print("decoded_response:")
-#print(decoded_response)
-#splited_response = decoded_response.replace(STX, '').split("|")
-#print("splited_response:")
-#print(splited_response)
-#print("operation_code: {}".format(int(splited_response[0])))
+#print(POS.set_normal_mode())
+#print(POS.last_sale())
 #print(POS.multicode_last_sale(True))
 #print(POS.refund(83))
 #print(POS.totals())
-#response = POS.details(True)
-#print(response)
-#print(response[0]['response_message'])
-#for x in response:
-#    print(x)
-response = POS.multicode_details(True)
-print(response)
+#print(POS.details(True))
+#print(POS.multicode_details(True))
+print(POS.close())

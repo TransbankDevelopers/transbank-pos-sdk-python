@@ -55,8 +55,3 @@ response_codes = {
     94: "Error al Procesar Respuesta",
     95: "Error al Imprimir TASA"
 }
-
-
-def get_message(code: int):
-    message = response_codes.get(code, 'No encontrado')
-    return message

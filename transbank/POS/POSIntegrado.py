@@ -9,6 +9,7 @@ from transbank.responses.last_sale_response import LastSaleResponse
 from transbank.responses.multicode_last_sale_response import MultiCodeLastSaleResponse
 from transbank.responses.sales_detail_response import SalesDetailResponse
 from transbank.responses.multicode_sales_detail_response import MultiCodeSalesDetailResponse
+from transbank.responses.close_response import CloseResponse
 
 
 class POSIntegrado(Serial):
@@ -40,16 +41,18 @@ class POSIntegrado(Serial):
         except TransbankException:
             raise TransbankException("Unable to send Poll command on port")
 
-    def sale(self, amount: int, ticket: str, send_status=False):
+    def sale(self, amount: int, ticket: str, send_status=False, callback=None):
         if amount < 50:
             raise TransbankException("Amount must be greater than 50")
         if amount > 999999999:
             raise TransbankException("Amount must be less than 999999999")
         if len(ticket) > 6:
             raise TransbankException("Ticket must be up to 6 in length")
+        if send_status and callback is None:
+            raise TransbankException("A callback function is needed for intermediate messages")
 
         command = "0200|{}|{}|||{}|".format(str(amount), ticket, "1" if send_status else "0")
-        response = self.send_command(command)
+        response = self.send_command(command, intermediate_messages=send_status, callback=callback)
         sale_response = SaleResponse(response)
         return sale_response.get_response()
 
@@ -107,6 +110,8 @@ class POSIntegrado(Serial):
         return details_response
 
     def close(self):
-        return self.send_command("0500||")
+        response = self.send_command("0500||")
+        close_response = CloseResponse(response)
+        return close_response.get_response()
 
 

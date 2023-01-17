@@ -3,6 +3,7 @@ import serial
 import time
 
 from transbank.error.transbank_exception import TransbankException
+from transbank.responses.intermediate_message_response import IntermediateMessageResponse
 
 
 class Serial:
@@ -72,7 +73,7 @@ class Serial:
             self.serial_port.flushInput()
             raise TransbankException("Read operation Timeout")
 
-    def send_command(self, command, intermediate_messages=False, sales_detail=False, print_on_pos=False, multicode=False):
+    def send_command(self, command, intermediate_messages=False, sales_detail=False, print_on_pos=False, callback=None):
         self.can_write()
         full_command = self.create_command(command)
         self.serial_port.flush()
@@ -80,16 +81,23 @@ class Serial:
         if not self.check_ack():
             raise TransbankException("NACK received, check the message sent to the POS")
 
+        response = self.read_response()
+
+        if intermediate_messages:
+            while self.is_intermediate_message(response):
+                print("Intermediate message received")
+                intermediate_response = IntermediateMessageResponse(response)
+                callback(intermediate_response.get_response())
+                response = self.read_response()
+
         if sales_detail and print_on_pos:
-            details_response = []
-            response = self.read_response()
-            details_response.append(response)
+            details_response = [response]
             while self.has_authorization_code(response):
                 response = self.read_response()
                 details_response.append(response)
             return details_response
 
-        return self.read_response()
+        return response
 
     def read_response(self):
         self.wait_response()
@@ -113,4 +121,7 @@ class Serial:
         parsed_response = response.decode().replace(self.STX, '').split("|")
         return parsed_response[5] != ""
 
+    def is_intermediate_message(self, response: bytes):
+        parsed_response = response.decode().replace(self.STX, '').split("|")
+        return parsed_response[0] == "0900"
 

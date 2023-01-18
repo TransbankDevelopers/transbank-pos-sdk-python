@@ -10,11 +10,11 @@ port = "/dev/cu.usbmodem0123456789ABCD1"
 POS = POSIntegrado()
 print(POS.list_ports())
 print(POS.open_port(port))
-try:
-    print(POS.load_keys())
-except TransbankException as e:
-    print(e)
-    print(e.__cause__)
+#try:
+#    print(POS.load_keys())
+#except TransbankException as e:
+#    print(e)
+#    print(e.__cause__)
 #print(POS.sale(25000, "abcd12", True, callback=intermediate_message_callback))
 #print(POS.multicode_sale(1200, "Tic123", 597029414301))
 #print(POS.set_normal_mode())
@@ -25,3 +25,4 @@ except TransbankException as e:
 #print(POS.details(True))
 #print(POS.multicode_details(True))
 #print(POS.close())
+print(POS.close_port())

@@ -10,7 +10,7 @@ class Serial:
 
     __DEFAULT_TIMEOUT = 150000
     __DEFAULT_BAUD_RATE = 115200
-    __serial_port = None
+    _serial_port = None
     __ACK = b'\x06'
     __STX = '\x02'
     __ETX = '\x03'
@@ -32,15 +32,15 @@ class Serial:
         return ports
 
     def open_port(self, port, baud_rate=__DEFAULT_BAUD_RATE):
-        self.__serial_port = serial.Serial(port=port, baudrate=baud_rate)
-        return self.__serial_port.isOpen()
+        self._serial_port = serial.Serial(port=port, baudrate=baud_rate)
+        return self._serial_port.isOpen()
 
     def close_port(self):
-        self.__serial_port.close()
-        return self.__serial_port.isOpen()
+        self._serial_port.close()
+        return not self._serial_port.isOpen()
 
     def _can_write(self):
-        if self.__serial_port is None or not self.__serial_port.isOpen():
+        if self._serial_port is None or not self._serial_port.isOpen():
             raise TransbankException("Can't write to port, the port is null or not open")
 
     def _create_command(self, payload: str):
@@ -61,26 +61,26 @@ class Serial:
     def _check_ack(self):
         self.__wait_response()
         response = []
-        if self.__serial_port.inWaiting() > 0:
-            response.append(self.__serial_port.read())
+        if self._serial_port.inWaiting() > 0:
+            response.append(self._serial_port.read())
         return response[0] == self.__ACK
 
     def __wait_response(self):
         timer = 0
         while timer < self.__timeout:
-            if self.__serial_port.inWaiting() > 0:
+            if self._serial_port.inWaiting() > 0:
                 break
             time.sleep(0.2)
             timer += 1
         if timer == self.__timeout:
-            self.__serial_port.flushInput()
+            self._serial_port.flushInput()
             raise TransbankException("Read operation Timeout")
 
     def _send_command(self, command, intermediate_messages=False, sales_detail=False, print_on_pos=False, callback=None):
         self._can_write()
         full_command = self._create_command(command)
-        self.__serial_port.flush()
-        self.__serial_port.write(full_command)
+        self._serial_port.flush()
+        self._serial_port.write(full_command)
         if not self._check_ack():
             raise TransbankException("NACK received, check the message sent to the POS")
 
@@ -103,18 +103,18 @@ class Serial:
 
     def __read_response(self):
         self.__wait_response()
-        bytes_in_waiting = self.__serial_port.inWaiting()
-        response = self.__serial_port.read(bytes_in_waiting)
+        bytes_in_waiting = self._serial_port.inWaiting()
+        response = self._serial_port.read(bytes_in_waiting)
         self.__send_ack()
         while response.decode()[-2] != self.__ETX:
             self.__wait_response()
-            bytes_in_waiting = self.__serial_port.inWaiting()
-            response += self.__serial_port.read(bytes_in_waiting)
+            bytes_in_waiting = self._serial_port.inWaiting()
+            response += self._serial_port.read(bytes_in_waiting)
         return response
 
     def __send_ack(self):
         ack = [ord(self.__ACK)]
-        self.__serial_port.write(ack)
+        self._serial_port.write(ack)
 
     def __has_authorization_code(self, response: bytes):
         parsed_response = response.decode().replace(self.__STX, '').split("|")

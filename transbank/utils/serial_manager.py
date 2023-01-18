@@ -39,11 +39,11 @@ class Serial:
         self.__serial_port.close()
         return self.__serial_port.isOpen()
 
-    def can_write(self):
+    def _can_write(self):
         if self.__serial_port is None or not self.__serial_port.isOpen():
             raise TransbankException("Can't write to port, the port is null or not open")
 
-    def create_command(self, payload: str):
+    def _create_command(self, payload: str):
         calculated_lrc = self.__lrc(payload+self.__ETX)
         full_command = [ord(self.__STX)]
         for character in payload:
@@ -59,7 +59,7 @@ class Serial:
         print("Calculated LRC: {}".format(lrc))
         return chr(lrc)
 
-    def check_ack(self):
+    def _check_ack(self):
         self.__wait_response()
         response = []
         if self.__serial_port.inWaiting() > 0:
@@ -81,33 +81,33 @@ class Serial:
             self.__serial_port.flushInput()
             raise TransbankException("Read operation Timeout")
 
-    def send_command(self, command, intermediate_messages=False, sales_detail=False, print_on_pos=False, callback=None):
-        self.can_write()
-        full_command = self.create_command(command)
+    def _send_command(self, command, intermediate_messages=False, sales_detail=False, print_on_pos=False, callback=None):
+        self._can_write()
+        full_command = self._create_command(command)
         self.__serial_port.flush()
         self.__serial_port.write(full_command)
-        if not self.check_ack():
+        if not self._check_ack():
             raise TransbankException("NACK received, check the message sent to the POS")
 
-        response = self.read_response()
+        response = self.__read_response()
 
         if intermediate_messages:
             while self.__is_intermediate_message(response):
                 print("Intermediate message received")
                 intermediate_response = IntermediateMessageResponse(response)
                 callback(intermediate_response.get_response())
-                response = self.read_response()
+                response = self.__read_response()
 
         if sales_detail and print_on_pos:
             details_response = [response]
             while self.__has_authorization_code(response):
-                response = self.read_response()
+                response = self.__read_response()
                 details_response.append(response)
             return details_response
 
         return response
 
-    def read_response(self):
+    def __read_response(self):
         self.__wait_response()
         bytes_in_waiting = self.__serial_port.inWaiting()
         print("Reading input buffer. Bytes in waiting: {}".format(bytes_in_waiting))

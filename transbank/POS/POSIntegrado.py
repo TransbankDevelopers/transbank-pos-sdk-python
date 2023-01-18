@@ -16,17 +16,17 @@ class POSIntegrado(Serial):
 
     def poll(self):
         try:
-            self.can_write()
-            command = self.create_command("0100")
+            self._can_write()
+            command = self._create_command("0100")
             self.__serial_port.write(command)
-            return self.check_ack()
+            return self._check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Poll command on port") from e
 
     def load_keys(self):
         try:
-            self.can_write()
-            response = self.send_command("0800")
+            self._can_write()
+            response = self._send_command("0800")
             load_keys_response = LoadKeysResponse(response)
             return load_keys_response.get_response()
         except Exception as e:
@@ -34,10 +34,10 @@ class POSIntegrado(Serial):
 
     def set_normal_mode(self):
         try:
-            self.can_write()
-            command = self.create_command("0300")
+            self._can_write()
+            command = self._create_command("0300")
             self.__serial_port.write(command)
-            return self.check_ack()
+            return self._check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Normal Mode command on port") from e
 
@@ -52,7 +52,7 @@ class POSIntegrado(Serial):
             raise TransbankException("A callback function is needed for intermediate messages")
         try:
             command = "0200|{}|{}|||{}|".format(str(amount), ticket, "1" if send_status else "0")
-            response = self.send_command(command, intermediate_messages=send_status, callback=callback)
+            response = self._send_command(command, intermediate_messages=send_status, callback=callback)
             sale_response = SaleResponse(response)
             return sale_response.get_response()
         except Exception as e:
@@ -67,7 +67,7 @@ class POSIntegrado(Serial):
             raise TransbankException("Ticket must be up to 6 in length")
         try:
             command = "0270|{}|{}|||{}|{}|".format(str(amount), ticket, "1" if send_status else "0", str(commerce_code))
-            response = self.send_command(command)
+            response = self._send_command(command)
             multicode_sale_response = MultiCodeSaleResponse(response)
             return multicode_sale_response.get_response()
         except Exception as e:
@@ -75,7 +75,7 @@ class POSIntegrado(Serial):
 
     def last_sale(self):
         try:
-            response = self.send_command("0250|")
+            response = self._send_command("0250|")
             last_sale_response = LastSaleResponse(response)
             return last_sale_response.get_response()
         except Exception as e:
@@ -84,7 +84,7 @@ class POSIntegrado(Serial):
     def multicode_last_sale(self, send_voucher=False):
         try:
             command = "0280|{}".format("1" if send_voucher else "0")
-            response = self.send_command(command)
+            response = self._send_command(command)
             last_sale_response = MultiCodeLastSaleResponse(response) if send_voucher else MultiCodeSaleResponse(response)
             return last_sale_response.get_response()
         except Exception as e:
@@ -93,7 +93,7 @@ class POSIntegrado(Serial):
     def refund(self, operation_id: int):
         try:
             command = "1200|{}|".format(str(operation_id))
-            response = self.send_command(command)
+            response = self._send_command(command)
             refund_response = RefundResponse(response)
             return refund_response.get_response()
         except Exception as e:
@@ -101,7 +101,7 @@ class POSIntegrado(Serial):
 
     def totals(self):
         try:
-            response = self.send_command("0700||")
+            response = self._send_command("0700||")
             totals_response = TotalsResponse(response)
             return totals_response.get_response()
         except Exception as e:
@@ -111,7 +111,7 @@ class POSIntegrado(Serial):
         try:
             command = "0260|{}|".format("1" if print_on_pos else "0")
             details_response = []
-            details = self.send_command(command, sales_detail=True, print_on_pos=print_on_pos)
+            details = self._send_command(command, sales_detail=True, print_on_pos=print_on_pos)
             for response in details:
                 sale = SalesDetailResponse(response)
                 details_response.append(sale.get_response())
@@ -123,7 +123,7 @@ class POSIntegrado(Serial):
         try:
             command = "0290|{}|".format("1" if print_on_pos else "0")
             details_response = []
-            details = self.send_command(command, sales_detail=True, print_on_pos=print_on_pos)
+            details = self._send_command(command, sales_detail=True, print_on_pos=print_on_pos)
             for response in details:
                 multicode_sale = MultiCodeSalesDetailResponse(response)
                 details_response.append(multicode_sale.get_response())
@@ -133,7 +133,7 @@ class POSIntegrado(Serial):
 
     def close(self):
         try:
-            response = self.send_command("0500||")
+            response = self._send_command("0500||")
             close_response = CloseResponse(response)
             return close_response.get_response()
         except Exception as e:

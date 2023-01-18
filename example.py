@@ -15,7 +15,6 @@ print(POS.open_port(port))
 #except TransbankException as e:
 #    print(e)
 #    print(e.__cause__)
-
 #print(POS.sale(25000, "abcd12", True, callback=intermediate_message_callback))
 #print(POS.multicode_sale(1200, "Tic123", 597029414301))
 #print(POS.set_normal_mode())

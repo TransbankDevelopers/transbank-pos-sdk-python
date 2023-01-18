@@ -56,7 +56,6 @@ class Serial:
         lrc = 0
         for character in command:
             lrc = lrc ^ ord(character)
-        print("Calculated LRC: {}".format(lrc))
         return chr(lrc)
 
     def _check_ack(self):
@@ -64,19 +63,15 @@ class Serial:
         response = []
         if self.__serial_port.inWaiting() > 0:
             response.append(self.__serial_port.read())
-            print("bytes in waiting: {}".format(self.__serial_port.inWaiting()))
-        print("ACK Received")
         return response[0] == self.__ACK
 
     def __wait_response(self):
         timer = 0
         while timer < self.__timeout:
             if self.__serial_port.inWaiting() > 0:
-                print("Response received")
                 break
             time.sleep(0.2)
             timer += 1
-            print("Waiting for response")
         if timer == self.__timeout:
             self.__serial_port.flushInput()
             raise TransbankException("Read operation Timeout")
@@ -93,7 +88,6 @@ class Serial:
 
         if intermediate_messages:
             while self.__is_intermediate_message(response):
-                print("Intermediate message received")
                 intermediate_response = IntermediateMessageResponse(response)
                 callback(intermediate_response.get_response())
                 response = self.__read_response()
@@ -110,9 +104,7 @@ class Serial:
     def __read_response(self):
         self.__wait_response()
         bytes_in_waiting = self.__serial_port.inWaiting()
-        print("Reading input buffer. Bytes in waiting: {}".format(bytes_in_waiting))
         response = self.__serial_port.read(bytes_in_waiting)
-        print("Response readed, lenght: {}".format(str(len(response))))
         self.__send_ack()
         while response.decode()[-2] != self.__ETX:
             self.__wait_response()
@@ -122,7 +114,6 @@ class Serial:
 
     def __send_ack(self):
         ack = [ord(self.__ACK)]
-        print("sending ACK")
         self.__serial_port.write(ack)
 
     def __has_authorization_code(self, response: bytes):

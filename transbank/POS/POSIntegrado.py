@@ -18,7 +18,7 @@ class POSIntegrado(Serial):
         try:
             self.can_write()
             command = self.create_command("0100")
-            self.serial_port.write(command)
+            self.__serial_port.write(command)
             return self.check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Poll command on port") from e
@@ -36,7 +36,7 @@ class POSIntegrado(Serial):
         try:
             self.can_write()
             command = self.create_command("0300")
-            self.serial_port.write(command)
+            self.__serial_port.write(command)
             return self.check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Normal Mode command on port") from e

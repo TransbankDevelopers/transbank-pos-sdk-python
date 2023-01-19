@@ -24,7 +24,8 @@ class Serial:
     def timeout(self, timeout):
         self.__timeout = timeout
 
-    def list_ports(self):
+    @staticmethod
+    def list_ports():
         serial_ports = serial.tools.list_ports.comports()
         ports = []
         for port, description, hwid in serial_ports:
@@ -52,7 +53,8 @@ class Serial:
         full_command.append(ord(calculated_lrc))
         return full_command
 
-    def __lrc(self, command: str):
+    @staticmethod
+    def __lrc(command: str):
         lrc = 0
         for character in command:
             lrc = lrc ^ ord(character)

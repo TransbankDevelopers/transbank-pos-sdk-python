@@ -44,7 +44,7 @@ class Serial:
         :param port: str
             Device name
         :param baud_rate: int, default 115200
-            Rate a which information is transferred to port
+            Rate at which information is transferred to port
         :return:
         bool
             True if port was opened

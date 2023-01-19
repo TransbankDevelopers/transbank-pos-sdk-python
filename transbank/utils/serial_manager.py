@@ -60,10 +60,8 @@ class Serial:
 
     def _check_ack(self):
         self.__wait_response()
-        response = []
-        if self._serial_port.inWaiting() > 0:
-            response.append(self._serial_port.read())
-        return response[0] == self.__ACK
+        response = self._serial_port.read()
+        return response == self.__ACK
 
     def __wait_response(self):
         timer = 0

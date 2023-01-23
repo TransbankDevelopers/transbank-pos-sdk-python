@@ -24,18 +24,41 @@ class Serial:
     def timeout(self, timeout):
         self.__timeout = timeout
 
-    def list_ports(self):
+    @staticmethod
+    def list_ports():
+        """
+        List available COM ports.
+        :return:
+        list
+            compound of a dict for each port {"port": xxx, "description": xxx}
+        """
         serial_ports = serial.tools.list_ports.comports()
         ports = []
         for port, description, hwid in serial_ports:
             ports.append({"port": port, "description": description})
         return ports
 
-    def open_port(self, port, baud_rate=__DEFAULT_BAUD_RATE):
+    def open_port(self, port: str, baud_rate=__DEFAULT_BAUD_RATE):
+        """
+        Open a COM port.
+        :param port: str
+            Device name
+        :param baud_rate: int, default 115200
+            Rate at which information is transferred to port
+        :return:
+        bool
+            True if port was opened
+        """
         self._serial_port = serial.Serial(port=port, baudrate=baud_rate)
         return self._serial_port.isOpen()
 
     def close_port(self):
+        """
+        Close a COM port previously opened
+        :return:
+        bool
+            True if port was closed
+        """
         self._serial_port.close()
         return not self._serial_port.isOpen()
 
@@ -52,7 +75,8 @@ class Serial:
         full_command.append(ord(calculated_lrc))
         return full_command
 
-    def __lrc(self, command: str):
+    @staticmethod
+    def __lrc(command: str):
         lrc = 0
         for character in command:
             lrc = lrc ^ ord(character)
@@ -60,10 +84,8 @@ class Serial:
 
     def _check_ack(self):
         self.__wait_response()
-        response = []
-        if self._serial_port.inWaiting() > 0:
-            response.append(self._serial_port.read())
-        return response[0] == self.__ACK
+        response = self._serial_port.read()
+        return response == self.__ACK
 
     def __wait_response(self):
         timer = 0

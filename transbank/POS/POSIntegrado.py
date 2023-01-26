@@ -65,7 +65,7 @@ class POSIntegrado(Serial):
         :param amount: int, amount of sale
         :param ticket: str, ticket number
         :param send_status: bool, send intermediate messages
-        :param callback: function, function where intermediate messages are send
+        :param callback: function, function where intermediate messages are sent
         :return:
         dict
             data received from POS when sale is executed
@@ -93,6 +93,7 @@ class POSIntegrado(Serial):
         :param ticket: str, ticket number
         :param send_status: bool, send intermediate messages
         :param commerce_code: int, commerce code who performs the sale
+        :param callback: function, function where intermediate messages are sent
         :return:
         dict
             data received from POS when multicode sale is executed

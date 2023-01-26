@@ -86,7 +86,7 @@ class POSIntegrado(Serial):
         except Exception as e:
             raise TransbankException("Unable to send Sale command") from e
 
-    def multicode_sale(self, amount: int, ticket: str, commerce_code: int, send_status=False):
+    def multicode_sale(self, amount: int, ticket: str, commerce_code: int, send_status=False, callback=None):
         """
         Send the multicode sale command to POS
         :param amount: int, amount of sale
@@ -103,9 +103,11 @@ class POSIntegrado(Serial):
             raise TransbankException("Amount must be less than 999999999")
         if len(ticket) > 6:
             raise TransbankException("Ticket must be up to 6 in length")
+        if send_status and callback is None:
+            raise TransbankException("A callback function is needed for intermediate messages")
         try:
             command = "0270|{}|{}|||{}|{}|".format(str(amount), ticket, "1" if send_status else "0", str(commerce_code))
-            response = self._send_command(command)
+            response = self._send_command(command, intermediate_messages=send_status, callback=callback)
             multicode_sale_response = MultiCodeSaleResponse(response)
             return multicode_sale_response.get_response()
         except Exception as e:

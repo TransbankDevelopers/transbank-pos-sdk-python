@@ -140,7 +140,7 @@ class Serial:
 
     def __has_authorization_code(self, response: bytes):
         parsed_response = response.decode().replace(self.__STX, '').split("|")
-        return parsed_response[5] != ""
+        return not (parsed_response[5] == "" or parsed_response[5] == " ")
 
     def __is_intermediate_message(self, response: bytes):
         parsed_response = response.decode().replace(self.__STX, '').split("|")

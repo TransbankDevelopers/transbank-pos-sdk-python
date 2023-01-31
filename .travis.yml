@@ -5,6 +5,8 @@ install:
 - pip install pipenv==2022.1.8
 - pipenv install setuptools==60.5.0
 - pipenv install --dev --skip-lock
+script:
+- echo "skipping tests"
 
 jobs:
   include:

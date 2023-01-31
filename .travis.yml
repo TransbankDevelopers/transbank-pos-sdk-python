@@ -19,6 +19,6 @@ jobs:
     deploy:
       provider: pypi
       user: __token__
-      password: $GITHUB_TOKEN
+      password: $PYPI_TOKEN
       on:
         tags: true

@@ -20,7 +20,7 @@ Como se explica más abajo, la documentación oficial está en [Transbank develo
 #### `listPorts()`
 Devuelve una lista de los puertos disponibles.
 ```python
-from transbank.POS.POSIntegrado import POSIntegrado
+from transbank import POSIntegrado
 
 POS = POSIntegrado()
 ports = POS.list_ports()
@@ -44,13 +44,13 @@ Ejecuta el comando `POLL` en el POS. Retorna `True` si el POS se encuentra conec
 print(POS.poll())
 ```
 
-#### `POS.load_keys()`
+#### `load_keys()`
 Ejecuta el comando `load keys` en el POS.
 ```python
 print(POS.load_keys())
 ```
 
-#### `POS.sale(amount: int, ticket: str, send_status=False, callback=None)`
+#### `sale(amount: int, ticket: str, send_status=False, callback=None)`
 Ejecuta el comando `sale` en el POS.
 `amount` es el integer que representa el monto a pagar. `ticket` es un número de ticket  que te permita 
 referenciar la venta internamente.
@@ -70,7 +70,7 @@ print(POS.sale(25000, "abcd12", True, callback=intermediate_message_callback))
 print(POS.sale(25000, "123456"))
 ```
 
-#### `POS.multicode_sale(amount: int, ticket: str, commerce_code: int, send_status=False, callback=None)`
+#### `multicode_sale(amount: int, ticket: str, commerce_code: int, send_status=False, callback=None)`
 Ejecuta el comando `multicode sale` en el POS.
 `amount` es el integer que representa el monto a pagar. `ticket` es un número de ticket  que te permita 
 referenciar la venta internamente. `commerce_code` es el código de comercio que ejecutara la venta

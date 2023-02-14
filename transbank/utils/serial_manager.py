@@ -93,8 +93,8 @@ class Serial:
             if self._serial_port.inWaiting() > 0:
                 break
             time.sleep(0.2)
-            timer += 1
-        if timer == self.__timeout:
+            timer += 0.2
+        if timer >= self.__timeout:
             self._serial_port.flushInput()
             raise TransbankException("Read operation Timeout")
 

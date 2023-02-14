@@ -26,12 +26,18 @@ POS = POSIntegrado()
 ports = POS.list_ports()
 print(ports)
 ```
-
+#### `timeout`
+Modificar el timeout (en segundos) de espera para la comunicación serial.
+```python
+POS.timeout = 1500
+```
 #### `open_port(port: str)`
-Abre el puerto indicado. Retorna `True` si logra abrir el puerto, en caso contrario retorna `False`.
+Abre el puerto indicado. Retorna `True` si logra abrir el puerto, en caso contrario retorna `False`. Puedes pasar opcionalmente como parámetro el baudrate con el que quieras configurar el puerto.
 ```python
 port = "/dev/cu.usbmodem0123456789ABCD1"
 print(POS.open_port(port))
+# Con baudrate
+print(POS.open_port(port=port, baud_rate=9600))
 ```
 #### `close_port()`
 Cierra el puerto que se haya abierto previamente.

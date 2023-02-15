@@ -126,6 +126,18 @@ Ejecuta el comando `close` en el POS.
 print(POS.close())
 ```
 
+#### `Excepciones`
+Si ocurre algún error al ejecutar los comandos se lanzará una excepción del tipo `TransbankException`.
+```python
+from transbank import TransbankException
+
+try:
+    POS.open_port(port=port, baud_rate=9600)
+except TransbankException as e:
+    print("Exception: " + str(e))
+    print("Cause: " + str(e.__cause__))
+```
+
 ## Documentación
 
 Puedes encontrar toda la documentación de cómo usar este SDK en el sitio https://www.transbankdevelopers.cl.

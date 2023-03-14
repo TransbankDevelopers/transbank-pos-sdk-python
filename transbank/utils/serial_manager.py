@@ -32,11 +32,14 @@ class Serial:
         list
             compound of a dict for each port {"port": xxx, "description": xxx}
         """
-        serial_ports = serial.tools.list_ports.comports()
-        ports = []
-        for port, description, hwid in serial_ports:
-            ports.append({"port": port, "description": description})
-        return ports
+        try:
+            serial_ports = serial.tools.list_ports.comports()
+            ports = []
+            for port, description, hwid in serial_ports:
+                ports.append({"port": port, "description": description})
+            return ports
+        except Exception as e:
+            raise TransbankException("Unable to list ports") from e
 
     def open_port(self, port: str, baud_rate=__DEFAULT_BAUD_RATE):
         """
@@ -49,8 +52,11 @@ class Serial:
         bool
             True if port was opened
         """
-        self._serial_port = serial.Serial(port=port, baudrate=baud_rate)
-        return self._serial_port.isOpen()
+        try:
+            self._serial_port = serial.Serial(port=port, baudrate=baud_rate)
+            return self._serial_port.isOpen()
+        except Exception as e:
+            raise TransbankException("Unable to open port") from e
 
     def close_port(self):
         """
@@ -59,8 +65,11 @@ class Serial:
         bool
             True if port was closed
         """
-        self._serial_port.close()
-        return not self._serial_port.isOpen()
+        try:
+            self._serial_port.close()
+            return not self._serial_port.isOpen()
+        except Exception as e:
+            raise TransbankException("Unable to close port") from e
 
     def _can_write(self):
         if self._serial_port is None or not self._serial_port.isOpen():

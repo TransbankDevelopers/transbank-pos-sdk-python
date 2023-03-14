@@ -184,6 +184,12 @@ class POSIntegrado(Serial):
         """
         try:
             command = "0260|{}|".format("1" if print_on_pos else "0")
+            if not print_on_pos:
+                self._can_write()
+                full_command = self._create_command(command)
+                self._serial_port.write(full_command)
+                return self._check_ack()
+
             details_response = []
             details = self._send_command(command, sales_detail=True, print_on_pos=print_on_pos)
             for response in details:
@@ -203,6 +209,11 @@ class POSIntegrado(Serial):
         """
         try:
             command = "0290|{}|".format("1" if print_on_pos else "0")
+            if not print_on_pos:
+                self._can_write()
+                full_command = self._create_command(command)
+                self._serial_port.write(full_command)
+                return self._check_ack()
             details_response = []
             details = self._send_command(command, sales_detail=True, print_on_pos=print_on_pos)
             for response in details:

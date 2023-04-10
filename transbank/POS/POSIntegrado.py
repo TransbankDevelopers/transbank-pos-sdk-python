@@ -75,7 +75,7 @@ class POSIntegrado(Serial):
         if amount > 999999999:
             raise TransbankException("Amount must be less than 999999999")
         if len(ticket) > 6:
-            raise TransbankException("Ticket must be up to 6 in length")
+            raise TransbankException("Ticket must have a length less than or equal to 6")
         if send_status and callback is None:
             raise TransbankException("A callback function is needed for intermediate messages")
         try:
@@ -103,7 +103,7 @@ class POSIntegrado(Serial):
         if amount > 999999999:
             raise TransbankException("Amount must be less than 999999999")
         if len(ticket) > 6:
-            raise TransbankException("Ticket must be up to 6 in length")
+            raise TransbankException("Ticket must have a length less than or equal to 6")
         if send_status and callback is None:
             raise TransbankException("A callback function is needed for intermediate messages")
         try:

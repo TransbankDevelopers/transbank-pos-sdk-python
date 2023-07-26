@@ -1,5 +1,5 @@
 import time
-from serial_provider import SerialProvider
+from transbank.utils.serial_provider import SerialProvider
 from transbank.error.transbank_exception import TransbankException
 from transbank.responses.intermediate_message_response import IntermediateMessageResponse
 

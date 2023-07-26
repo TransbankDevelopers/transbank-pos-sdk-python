@@ -10,9 +10,14 @@ from transbank.responses.multicode_last_sale_response import MultiCodeLastSaleRe
 from transbank.responses.sales_detail_response import SalesDetailResponse
 from transbank.responses.multicode_sales_detail_response import MultiCodeSalesDetailResponse
 from transbank.responses.close_response import CloseResponse
+from transbank.utils.serial_provider import SerialProvider
 
 
 class POSIntegrado(Serial):
+
+    def __init__(self):
+        serial_provider = SerialProvider()
+        super().__init__(serial_provider)
 
     def poll(self):
         """
@@ -24,7 +29,7 @@ class POSIntegrado(Serial):
         try:
             self._can_write()
             command = self._create_command("0100")
-            self._serial_port.write(command)
+            self._serial_provider.write(command)
             return self._check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Poll command on port") from e
@@ -54,7 +59,7 @@ class POSIntegrado(Serial):
         try:
             self._can_write()
             command = self._create_command("0300")
-            self._serial_port.write(command)
+            self._serial_provider.write(command)
             return self._check_ack()
         except Exception as e:
             raise TransbankException("Unable to send Normal Mode command on port") from e
@@ -187,7 +192,7 @@ class POSIntegrado(Serial):
             if not print_on_pos:
                 self._can_write()
                 full_command = self._create_command(command)
-                self._serial_port.write(full_command)
+                self._serial_provider.write(full_command)
                 return self._check_ack()
 
             details_response = []
@@ -212,7 +217,7 @@ class POSIntegrado(Serial):
             if not print_on_pos:
                 self._can_write()
                 full_command = self._create_command(command)
-                self._serial_port.write(full_command)
+                self._serial_provider.write(full_command)
                 return self._check_ack()
             details_response = []
             details = self._send_command(command, sales_detail=True, print_on_pos=print_on_pos)
@@ -236,5 +241,3 @@ class POSIntegrado(Serial):
             return close_response.get_response()
         except Exception as e:
             raise TransbankException("Unable to execute close in pos") from e
-
-

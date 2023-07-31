@@ -64,3 +64,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.sale(10, 'ABCD')
         self.assertTrue('Amount must be greater' in str(context.exception))
+
+    def test_normal_sale_ticket_exception(self):
+        with self.assertRaises(TransbankException) as context:
+            self.pos.sale(1990, 'ABCDEFG')
+        self.assertTrue('Ticket must have a length' in str(context.exception))

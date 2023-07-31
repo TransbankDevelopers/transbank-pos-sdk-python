@@ -26,3 +26,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.return_value = self.ACK
         result = self.pos.poll()
         self.assertEqual(True, result)
+
+    def test_poll_exception(self):
+        self.mock_serial.read_data.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.poll()
+        self.assertTrue('Unable to send Poll' in str(context.exception))

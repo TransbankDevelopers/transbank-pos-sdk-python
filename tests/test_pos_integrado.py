@@ -112,3 +112,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['totals']['read_data_response']
         result = self.pos.totals()
         self.assertEqual(responses['totals']['expected_response'], result)
+
+    def test_totals_exception(self):
+        self.mock_serial.read_data.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.totals()
+        self.assertTrue('Unable to get totals' in str(context.exception))

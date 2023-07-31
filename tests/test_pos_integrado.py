@@ -43,3 +43,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.load_keys()
         self.assertTrue('Unable to send load Keys' in str(context.exception))
+
+    def test_set_normal_mode(self):
+        self.mock_serial.read_data.return_value = self.ACK
+        result = self.pos.set_normal_mode()
+        self.assertEqual(True, result)

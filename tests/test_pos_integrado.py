@@ -101,3 +101,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['refund']['read_data_response']
         result = self.pos.refund(123)
         self.assertEqual(responses['refund']['expected_response'], result)
+
+    def test_refund_exception(self):
+        self.mock_serial.read_data.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.refund(123)
+        self.assertTrue('Unable to make refund' in str(context.exception))

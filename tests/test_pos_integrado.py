@@ -79,3 +79,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['last_sale']['read_data_response']
         result = self.pos.last_sale()
         self.assertEqual(responses['last_sale']['expected_response'], result)
+
+    def test_last_sale_exception(self):
+        self.mock_serial.read_data.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.last_sale()
+        self.assertTrue('Unable to recover last sale' in str(context.exception))

@@ -54,3 +54,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.set_normal_mode()
         self.assertTrue('Unable to send Normal Mode' in str(context.exception))
+
+    def test_normal_sale(self):
+        self.mock_serial.read_data.side_effect = responses['sale']['read_data_response']
+        result = self.pos.sale(13990, 'ABCD')
+        self.assertEqual(responses['sale']['expected_response'], result)

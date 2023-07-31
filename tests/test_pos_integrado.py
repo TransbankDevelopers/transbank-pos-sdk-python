@@ -59,3 +59,8 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['sale']['read_data_response']
         result = self.pos.sale(13990, 'ABCD')
         self.assertEqual(responses['sale']['expected_response'], result)
+
+    def test_normal_sale_amount_exception(self):
+        with self.assertRaises(TransbankException) as context:
+            self.pos.sale(10, 'ABCD')
+        self.assertTrue('Amount must be greater' in str(context.exception))

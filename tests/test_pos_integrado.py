@@ -129,3 +129,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.details(True)
         self.assertTrue('Unable to request sale detail' in str(context.exception))
+
+    def test_close(self):
+        self.mock_serial.read_data.side_effect = responses['close']['read_data_response']
+        result = self.pos.close()
+        self.assertEqual(responses['close']['expected_response'], result)

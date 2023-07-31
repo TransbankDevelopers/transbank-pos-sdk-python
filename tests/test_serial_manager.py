@@ -25,3 +25,9 @@ class TestSerialManager(unittest.TestCase):
         self.mock_serial_provider.is_port_open.return_value = True
         result = self.serial.open_port("port")
         self.assertEqual(True, result)
+
+    def test_open_port_exception(self):
+        self.mock_serial_provider.open_port.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.serial.open_port("port")
+        self.assertTrue('Unable to open port' in str(context.exception))

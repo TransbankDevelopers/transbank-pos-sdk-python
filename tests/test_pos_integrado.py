@@ -74,3 +74,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.sale(1990, 'ABCD', send_status=True)
         self.assertTrue('A callback function is needed' in str(context.exception))
+
+    def test_last_sale(self):
+        self.mock_serial.read_data.side_effect = responses['last_sale']['read_data_response']
+        result = self.pos.last_sale()
+        self.assertEqual(responses['last_sale']['expected_response'], result)

@@ -134,3 +134,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['close']['read_data_response']
         result = self.pos.close()
         self.assertEqual(responses['close']['expected_response'], result)
+
+    def test_close_exception(self):
+        self.mock_serial.write.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.close()
+        self.assertTrue('Unable to execute close' in str(context.exception))

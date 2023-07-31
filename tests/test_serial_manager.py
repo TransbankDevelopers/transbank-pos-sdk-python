@@ -14,3 +14,9 @@ class TestSerialManager(unittest.TestCase):
         self.mock_serial_provider.get_ports_list.return_value = responses['list_ports']['response']
         result = self.serial.list_ports()
         self.assertEqual(result, responses['list_ports']['expected_response'])
+
+    def test_list_ports_exception(self):
+        self.mock_serial_provider.get_ports_list.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.serial.list_ports()
+        self.assertTrue('Unable to list ports' in str(context.exception))

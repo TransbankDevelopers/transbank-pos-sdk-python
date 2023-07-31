@@ -96,3 +96,8 @@ class TestPosIntegrado(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.pos.multicode_last_sale()
         self.assertTrue('Unable to recover multicode last sale' in str(context.exception))
+
+    def test_refund(self):
+        self.mock_serial.read_data.side_effect = responses['refund']['read_data_response']
+        result = self.pos.refund(123)
+        self.assertEqual(responses['refund']['expected_response'], result)

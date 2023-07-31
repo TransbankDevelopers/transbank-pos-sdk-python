@@ -37,3 +37,9 @@ class TestPosIntegrado(unittest.TestCase):
         self.mock_serial.read_data.side_effect = responses['load_keys']['read_data_response']
         result = self.pos.load_keys()
         self.assertEqual(responses['load_keys']['expected_response'], result)
+
+    def test_load_keys_exception(self):
+        self.mock_serial.read_data.side_effect = self.mock_exception
+        with self.assertRaises(TransbankException) as context:
+            self.pos.load_keys()
+        self.assertTrue('Unable to send load Keys' in str(context.exception))

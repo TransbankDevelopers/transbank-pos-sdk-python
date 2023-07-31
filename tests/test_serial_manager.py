@@ -31,3 +31,8 @@ class TestSerialManager(unittest.TestCase):
         with self.assertRaises(TransbankException) as context:
             self.serial.open_port("port")
         self.assertTrue('Unable to open port' in str(context.exception))
+
+    def close_port(self):
+        self.mock_serial_provider.is_port_open.return_value = False
+        result = self.serial.close_port()
+        self.assertEqual(True, result)
